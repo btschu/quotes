@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Edit Account</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='style.css') }}">
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/css/bootstrap.min.css" integrity="sha384-r4NyP46KrjDleawBgD5tp8Y7UzmLA05oM1iAEQ17CSuDqnUK2+k9luXQOfXJCJ4I" crossorigin="anonymous">
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.0/dist/umd/popper.min.js" integrity="sha384-Q6E9RHvbIyZFJoft+2mJbHaEWldlvI9IOYy5n3zV9zzTtmI3UksdQRVvoxMfooAo" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/5.0.0-alpha1/js/bootstrap.min.js" integrity="sha384-oesi62hOLfzrys4LxRF63OJCXdXDipiYWBnvTl9Y9/TRlw5xlKIEHpNyvvDShgf/" crossorigin="anonymous"></script>
+</head>
+<body>
+    <div class="container">
+        <nav class="navbar pt-5 justify-content-between mb-4">
+            <h3 class="">Edit a Painting</h3>
+            <div class="navbar">
+                <a class="mr-5" href="/dashboard">Dashboard</a>
+                <a class="btn btn-danger ml-4 float-right" href="/logout">Logout</a>
+            </div>
+        </nav>
+        {% with messages = get_flashed_messages() %}
+            {% if messages %}
+                <div class="mt-4 mb-4 col-6 mx-auto alert-danger border rounded border-danger p-2">
+                    {% for message in messages %}
+                        <p class='pt-2 text-center text-danger'><em>{{ message }}</em></p>
+                    {% endfor %}
+                </div>
+            {% endif %}
+        {% endwith %}
+        <form class="d-flex justify-content-center" action="/account/update" method="post">
+            <div class="mb-3 mr-5">
+                <input type="hidden" name="id" value={{edit.id}}>
+                <label for="first_name" class="form-label">First Name:</label>
+                <input type="text" class="form-control mb-3" name="first_name" value="{{edit.first_name}}">
+                <label for="last_name" class="form-label">Last Name:</label>
+                <input type="text" class="form-control mb-3" name="last_name" value="{{edit.last_name}}">
+                <label for="email" class="form-label">Email:</label>
+                <input type="text" class="form-control mb-3" name="email" value="{{edit.email}}">
+                <input type='submit' value='Update' class="btn btn-success mt-4">
+            </div>
+        </form>
+    </div>
+</body>
+</html>
