@@ -53,9 +53,8 @@ def dashboard():
         'id': session['user_id'],
     }
     context = {
-        # "likes":Quote.get_all_likes(data),
         "user" : User.get_by_id(data),
-        "quotes" : Quote.get_all_likes()
+        "quotes" : Quote.get_all_likes(),
     }
     return render_template("dashboard.html", **context)
 
@@ -68,7 +67,7 @@ def create_quote():
     data = {
         "author": request.form["author"],
         "quote": request.form["quote"],
-        "author_id": session["user_id"]
+        "user_id": session["user_id"]
     }
     Quote.save(data)
     return redirect('/dashboard')
@@ -84,16 +83,11 @@ def logout():
 def edit_account(id):
     if 'user_id' not in session:
         return redirect('/logout')
-    # data = {
-    #     "id":id
-    # }
     user_data = {
         "id":session['user_id']
     }
     context = {
-        # "quotes" : Quote.get_all_quotes(),
         "edit" : User.get_by_id(user_data),
-        # "user" : User.get_by_id(user_data)
     }
     return render_template("edit_account.html", **context)
 
@@ -113,14 +107,12 @@ def update_account():
     User.update(data)
     return redirect('/dashboard')
 
-@app.route('/quote/<int:author_id>')
-def all_quotes_posted_by_one_author(author_id):
+@app.route('/quote/<int:user_id>')
+def all_quotes_posted_by_one_author(user_id):
     if 'user_id' not in session:
         return redirect('/logout')
     data = {
-        "author_id":author_id,
-        'author_first_name' : Quote.get_all_quotes_by_one_poster({"author_id":author_id}).first_name,
-        'author_last_name' : Quote.get_all_quotes_by_one_poster({"author_id":author_id}).last_name
+        "user_id":user_id,
     }
     user_data = {
         "id":session['user_id']

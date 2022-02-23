@@ -12,5 +12,3 @@ def destroy_quote(id):
     }
     Quote.destroy(data)
     return redirect('/dashboard')
-
-

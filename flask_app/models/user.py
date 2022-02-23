@@ -16,7 +16,6 @@ class User:
         self.updated_at = data['updated_at']
 
         self.quotes = []
-        
 
     @classmethod
     def save(cls,data):

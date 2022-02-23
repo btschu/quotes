@@ -11,27 +11,41 @@ class Quote:
         self.quote = data['quote']
         self.created_at = data['created_at']
         self.updated_at = data['updated_at']
-        self.author_id = data['author_id']
+        self.user_id = data['user_id']
 
-        # self.users = []
-        self.author_first_name = data['author_first_name']
-        self.author_last_name = data['author_last_name']
+        self.users = []
 
         self.likes = 0
 
     @classmethod
     def save(cls,data):
         query = """
-        INSERT INTO quotes (author, quote, author_id)
-        VALUES (%(author)s, %(quote)s, %(author_id)s);"""
+        INSERT INTO quotes (author, quote, user_id)
+        VALUES (%(author)s, %(quote)s, %(user_id)s);"""
         return connectToMySQL(db).query_db(query,data)
+
+    # @classmethod
+    # def get_all_users_that_post_quotes(cls,data):
+    #     query = """
+    #     SELECT * FROM quotes
+    #     JOIN users ON users.id = quotes.user_id;"""
+    #     results = connectToMySQL(db).query_db(query, data)
+    #     users = cls(results[0])
+    #     for row in results:
+    #         user_data = {
+    #             'id' : row[users.id],
+    #             'first_name' : row[users.first_name],
+    #             'last_name' : row[users.last_name]
+    #         }
+    #         users.quotes.append(User(user_data))
+    #     return users
 
     @classmethod
     def get_all_quotes_by_one_poster(cls, data):
         query = """
         SELECT * FROM quotes
-        LEFT JOIN users ON users.id = quotes.author_id
-        WHERE quotes.author_id = %(author_id)s;"""
+        LEFT JOIN users ON users.id = quotes.user_id
+        WHERE quotes.user_id = %(user_id)s;"""
         results = connectToMySQL(db).query_db(query, data)
         all_quotes = []
         for quote in results:
@@ -39,21 +53,11 @@ class Quote:
         return all_quotes
 
     @classmethod
-    def get_all_quotes(cls):
-        query = """
-        SELECT * FROM quotes
-        LEFT JOIN users ON users.id = quotes.author_id;"""
-        results = connectToMySQL(db).query_db(query)
-        quotes = []
-        for quote in results:
-            quotes.append(cls(quote))
-        return quotes
-
-    @classmethod
     def get_all_likes(cls):
         query = """
         SELECT * FROM quotes
-        JOIN likes ON quotes.id = likes.quote_id;"""
+        JOIN users ON users.id = quotes.user_id
+        LEFT JOIN likes ON quotes.id = likes.quote_id;"""
         results = connectToMySQL(db).query_db(query)
         quotes = []
         for quote in results:
@@ -61,11 +65,11 @@ class Quote:
                 'id' : quote['id'],
                 'author' : quote['author'],
                 'quote' : quote['quote'],
-                'created_at' : quote['created_at'],
-                'updated_at' : quote['updated_at'],
-                'author_id' : quote['author_id'],
-                'author_first_name' : User.get_by_id({"id":quote['author_id']}).first_name,
-                'author_last_name' : User.get_by_id({"id":quote['author_id']}).last_name
+                'created_at' : quote['users.created_at'],
+                'updated_at' : quote['users.updated_at'],
+                'user_id' : quote['user_id'],
+                'first_name' : quote['first_name'],
+                'last_name' : quote['last_name']
             }
             if len(quotes) == 0:
                 quotes.append(cls(current_quote))
@@ -75,8 +79,6 @@ class Quote:
                     quotes.append(cls(current_quote))
             last_quote = quotes[len(quotes)-1]
             last_quote.likes+=1
-        print(last_quote.likes)
-        print("********")
         return quotes
 
     @classmethod
