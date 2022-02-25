@@ -14,7 +14,7 @@
         <nav class="navbar pt-5 justify-content-between mb-4">
             {% for quote in quotes %}
                 {% if loop.index < 2 %}
-                    <h3 class="">Quotes posted by: {{ quote.author_first_name }} {{ quote.author_last_name }}</h3>
+                    <h3 class="">Quotes posted by: {{ quote.poster_first_name }} {{ quote.poster_last_name }}</h3>
                 {% endif %}
             {% endfor %}
             <div>

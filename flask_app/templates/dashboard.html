@@ -24,7 +24,7 @@
                 {% for quote in quotes %}
                     <div class="border border-dark mb-3 p-3">
                         <p>{{ quote.author }}: "{{ quote.quote }}"</p>
-                        <p>Posted By: <a href="/quote/{{ quote.user_id }}">{{ quote.first_name }} {{ quote.last_name }}</a></p>
+                        <p>Posted By: <a href="/quote/{{ quote.user_id }}">{{ quote.poster_first_name }} {{ quote.poster_last_name }}</a></p>
                         <div class="d-flex align-items-center">
                             <p>{{ quote.likes }} people like this</p>
                             <a class="btn btn-success ml-3" href="/like_quote/{{ quote.id }}">Like!</a>

@@ -23,7 +23,7 @@ def user_login():
     session['user_id'] = user.id
     return redirect('/dashboard')
 
-# Create new user
+# Register new user
 
 @app.route('/registration')
 def registration():
@@ -54,30 +54,11 @@ def dashboard():
     }
     context = {
         "user" : User.get_by_id(data),
-        "quotes" : Quote.get_all_likes(),
+        "quotes" : Quote.get_all_quotes_and_likes(),
     }
     return render_template("dashboard.html", **context)
 
-@app.route('/quote/create',methods=['POST'])
-def create_quote():
-    if 'user_id' not in session:
-        return redirect('/logout')
-    if not Quote.validate_quote(request.form):
-        return redirect('/dashboard')
-    data = {
-        "author": request.form["author"],
-        "quote": request.form["quote"],
-        "user_id": session["user_id"]
-    }
-    Quote.save(data)
-    return redirect('/dashboard')
-
-# Logout
-
-@app.route('/logout')
-def logout():
-    session.clear()
-    return redirect('/')
+# Edit user
 
 @app.route('/account/edit/<int:id>')
 def edit_account(id):
@@ -107,29 +88,9 @@ def update_account():
     User.update(data)
     return redirect('/dashboard')
 
-@app.route('/quote/<int:user_id>')
-def all_quotes_posted_by_one_author(user_id):
-    if 'user_id' not in session:
-        return redirect('/logout')
-    data = {
-        "user_id":user_id,
-    }
-    user_data = {
-        "id":session['user_id']
-    }
-    context = {
-        "quotes" : Quote.get_all_quotes_by_one_poster(data),
-        "user" : User.get_by_id(user_data),
-    }
-    return render_template("user_quote.html", **context)
+# Logout
 
-@app.route('/like_quote/<int:quote_id>')
-def increase_like(quote_id):
-    if 'user_id' not in session:
-        return redirect('/logout')
-    data = {
-        'quote_id' : quote_id,
-        'user_id' : session['user_id'],
-    }
-    Quote.like(data)
-    return redirect('/dashboard')
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/')

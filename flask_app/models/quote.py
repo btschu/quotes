@@ -1,6 +1,8 @@
+from re import U
 from flask_app.config.mysqlconnection import connectToMySQL
 from flask import flash
 from flask_app.models.user import User
+from pprint import pprint
 
 db = "quotes_and_users"
 
@@ -13,32 +15,18 @@ class Quote:
         self.updated_at = data['updated_at']
         self.user_id = data['user_id']
 
-        self.users = []
+        self.poster_first_name = data['first_name']
+        self.poster_last_name = data['last_name']
 
+        self.users = []
         self.likes = 0
 
     @classmethod
-    def save(cls,data):
+    def save_quote(cls,data):
         query = """
         INSERT INTO quotes (author, quote, user_id)
         VALUES (%(author)s, %(quote)s, %(user_id)s);"""
         return connectToMySQL(db).query_db(query,data)
-
-    # @classmethod
-    # def get_all_users_that_post_quotes(cls,data):
-    #     query = """
-    #     SELECT * FROM quotes
-    #     JOIN users ON users.id = quotes.user_id;"""
-    #     results = connectToMySQL(db).query_db(query, data)
-    #     users = cls(results[0])
-    #     for row in results:
-    #         user_data = {
-    #             'id' : row[users.id],
-    #             'first_name' : row[users.first_name],
-    #             'last_name' : row[users.last_name]
-    #         }
-    #         users.quotes.append(User(user_data))
-    #     return users
 
     @classmethod
     def get_all_quotes_by_one_poster(cls, data):
@@ -53,7 +41,7 @@ class Quote:
         return all_quotes
 
     @classmethod
-    def get_all_likes(cls):
+    def get_all_quotes_and_likes(cls):
         query = """
         SELECT * FROM quotes
         JOIN users ON users.id = quotes.user_id
@@ -82,17 +70,10 @@ class Quote:
         return quotes
 
     @classmethod
-    def like(cls, data):
+    def like_quote(cls, data):
         query = """
         INSERT INTO likes (user_id, quote_id)
         VALUES (%(user_id)s, %(quote_id)s);"""
-        return connectToMySQL(db).query_db(query,data)
-
-    @classmethod
-    def destroy(cls,data):
-        query = """
-        DELETE FROM quotes
-        WHERE id = %(id)s;"""
         return connectToMySQL(db).query_db(query,data)
 
     @staticmethod
